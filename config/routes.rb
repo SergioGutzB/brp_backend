@@ -12,7 +12,12 @@ Rails.application.routes.draw do
       post 'login', to: 'sessions#create'
       delete 'logout', to: 'sessions#destroy'
       
-      resources :users, only: [:index, :show, :create, :update, :destroy]
+      resources :users do
+        collection do
+          post 'create_employee'
+        end
+      end
+      resources :companies
       resources :admin_profiles, only: [:index, :show, :create, :update, :destroy]
       resources :executive_profiles, only: [:index, :show, :create, :update, :destroy]
       resources :employee_profiles, only: [:index, :show, :create, :update, :destroy]

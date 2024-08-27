@@ -17,16 +17,8 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      case @user.role
-      when 'executive'
-        @profile = @user.create_executive_profile(executive_profile_params)
-      when 'employee'
-        @profile = @user.create_employee_profile(employee_profile_params)
-        @profile.create_personal_info(personal_info_params)
-        @profile.create_work_info(work_info_params)
-      end
-
-      render json: { user: @user, profile: @profile }, status: :created
+      create_profile(@user)
+      render json: @user, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -35,6 +27,20 @@ class Api::V1::UsersController < ApplicationController
   def update
     if @user.update(user_params)
       render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
+  def create_employee
+    @company = current_user.executive_profile.companies.find(params[:company_id])
+    @user = User.new(user_params.merge(role: 'employee'))
+
+    if @user.save
+      @employee_profile = @user.create_employee_profile(employee_profile_params.merge(company: @company))
+      @employee_profile.create_personal_info(personal_info_params)
+      @employee_profile.create_work_info(work_info_params)
+      render json: @user, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -60,10 +66,6 @@ class Api::V1::UsersController < ApplicationController
       user.create_admin_profile
     when 'executive'
       user.create_executive_profile(executive_profile_params)
-    when 'employee'
-      employee_profile = user.create_employee_profile(employee_profile_params)
-      employee_profile.create_personal_info(personal_info_params)
-      employee_profile.create_work_info(work_info_params)
     end
   end
 
@@ -90,5 +92,11 @@ class Api::V1::UsersController < ApplicationController
       :work_schedule, :supervisor_name, :employee_id, :bank_account_number, :bank_name
       # Añade aquí los demás campos de información laboral
     )
+  end
+
+  def authorize_executive
+    unless current_user&.executive_profile
+      render json: { error: 'Unauthorized. Executive access required.' }, status: :unauthorized
+    end
   end
 end
