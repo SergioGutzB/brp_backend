@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable,
-         :confirmable, :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+    :recoverable, :rememberable, :validatable,
+    :confirmable, :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
   enum role: { admin: 0, executive: 1, employee: 2 }
 

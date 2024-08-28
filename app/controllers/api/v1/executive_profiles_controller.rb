@@ -1,52 +1,58 @@
-class Api::V1::ExecutiveProfilesController < ApplicationController
-  before_action :set_executive_profile, only: [:show, :update, :destroy]
-  before_action :authorize_admin, except: [:show, :update]
-  before_action :authorize_executive, only: [:show, :update]
+# frozen_string_literal: true
 
-  def index
-    @executive_profiles = ExecutiveProfile.all
-    render json: @executive_profiles
-  end
+module Api
+  module V1
+    class ExecutiveProfilesController < ApplicationController
+      before_action :set_executive_profile, only: %i[show update destroy]
+      before_action :authorize_admin, except: %i[show update]
+      before_action :authorize_executive, only: %i[show update]
 
-  def show
-    render json: @executive_profile
-  end
+      def index
+        @executive_profiles = ExecutiveProfile.all
+        render json: @executive_profiles
+      end
 
-  def create
-    @executive_profile = ExecutiveProfile.new(executive_profile_params)
+      def show
+        render json: @executive_profile
+      end
 
-    if @executive_profile.save
-      render json: @executive_profile, status: :created
-    else
-      render json: @executive_profile.errors, status: :unprocessable_entity
-    end
-  end
+      def create
+        @executive_profile = ExecutiveProfile.new(executive_profile_params)
 
-  def update
-    if @executive_profile.update(executive_profile_params)
-      render json: @executive_profile
-    else
-      render json: @executive_profile.errors, status: :unprocessable_entity
-    end
-  end
+        if @executive_profile.save
+          render json: @executive_profile, status: :created
+        else
+          render json: @executive_profile.errors, status: :unprocessable_entity
+        end
+      end
 
-  def destroy
-    @executive_profile.destroy
-  end
+      def update
+        if @executive_profile.update(executive_profile_params)
+          render json: @executive_profile
+        else
+          render json: @executive_profile.errors, status: :unprocessable_entity
+        end
+      end
 
-  private
+      def destroy
+        @executive_profile.destroy
+      end
 
-  def set_executive_profile
-    @executive_profile = ExecutiveProfile.find(params[:id])
-  end
+      private
 
-  def executive_profile_params
-    params.require(:executive_profile).permit(:user_id, :full_name, :nit, :professional_card, :phone)
-  end
+      def set_executive_profile
+        @executive_profile = ExecutiveProfile.find(params[:id])
+      end
 
-  def authorize_executive
-    unless current_user.admin? || current_user.id == @executive_profile.user_id
-      render json: { error: 'Unauthorized' }, status: :unauthorized
+      def executive_profile_params
+        params.require(:executive_profile).permit(:user_id, :full_name, :nit, :professional_card, :phone)
+      end
+
+      def authorize_executive
+        unless current_user.admin? || current_user.id == @executive_profile.user_id
+          render json: { error: 'Unauthorized' }, status: :unauthorized
+        end
+      end
     end
   end
 end
