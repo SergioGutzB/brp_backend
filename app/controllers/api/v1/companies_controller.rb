@@ -1,4 +1,5 @@
 class Api::V1::CompaniesController < ApplicationController
+  before_action :authenticate_user!
   before_action :authorize_executive
   
   def create
@@ -10,15 +11,20 @@ class Api::V1::CompaniesController < ApplicationController
     end
   end
 
+  def index
+    @companies = current_user.executive_profile.companies
+    render json: @companies
+  end
+
   private
 
   def company_params
     params.require(:company).permit(:name)
   end
 
-  def authorize_executive
-    unless current_user&.executive_profile
-      render json: { error: 'Unauthorized. Executive access required.' }, status: :unauthorized
-    end
-  end
+  # def authorize_executive
+  #   unless current_user&.executive_profile
+  #     render json: { error: 'Unauthorized. Executive access required.' }, status: :unauthorized
+  #   end
+  # end
 end

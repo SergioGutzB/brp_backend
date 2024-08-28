@@ -8,4 +8,8 @@ class User < ApplicationRecord
   has_one :admin_profile
   has_one :executive_profile
   has_one :employee_profile
+
+  def jwt_payload
+    { 'sub' => id }
+  end
 end

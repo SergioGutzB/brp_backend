@@ -15,10 +15,12 @@ class Api::V1::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.role = 'executive'  # Asumimos que este endpoint es solo para ejecutivos
 
     if @user.save
-      create_profile(@user)
-      render json: @user, status: :created
+      @user.create_executive_profile(executive_profile_params)
+      # No enviamos el token JWT aquí, ya que la cuenta aún no está confirmada
+      render json: { message: 'Por favor, confirma tu cuenta a través del enlace enviado a tu correo electrónico.' }, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
