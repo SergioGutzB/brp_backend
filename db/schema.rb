@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_27_230805) do
+ActiveRecord::Schema[7.0].define(version: 2024_08_28_232702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,8 +26,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_27_230805) do
     t.string "nit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "executive_profiles_id", null: false
-    t.index ["executive_profiles_id"], name: "index_companies_on_executive_profiles_id"
+    t.bigint "executive_profile_id", null: false
+    t.index ["executive_profile_id"], name: "index_companies_on_executive_profile_id"
   end
 
   create_table "employee_personal_infos", force: :cascade do |t|
@@ -109,7 +109,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_27_230805) do
   end
 
   add_foreign_key "admin_profiles", "users"
-  add_foreign_key "companies", "executive_profiles", column: "executive_profiles_id"
+  add_foreign_key "companies", "executive_profiles"
   add_foreign_key "employee_personal_infos", "employee_profiles"
   add_foreign_key "employee_profiles", "users"
   add_foreign_key "employee_work_infos", "employee_profiles"
