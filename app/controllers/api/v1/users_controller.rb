@@ -19,14 +19,13 @@ module Api
 
       def create
         @user = User.new(user_params)
-        @user.role = 'executive'
+        @user.role = 'executive' # Forzamos el rol a ejecutivo
 
         if @user.save
           @user.create_executive_profile(executive_profile_params)
           render json: {
             message: 'Por favor, confirma tu cuenta a través del enlace enviado a tu correo electrónico.'
-          },
-            status: :created
+          }, status: :created
         else
           render json: @user.errors, status: :unprocessable_entity
         end
@@ -42,7 +41,7 @@ module Api
 
       def create_employee # rubocop:disable Metrics/AbcSize
         @company = current_user.executive_profile.companies.find(params[:company_id])
-        @user = User.new(user_params.merge(role: 'employee'))
+        @user = User.new(employee_user_params.merge(role: 'employee'))
 
         if @user.save
           @employee_profile = @user.create_employee_profile(employee_profile_params.merge(company: @company))
@@ -65,16 +64,11 @@ module Api
       end
 
       def user_params
-        params.require(:user).permit(:email, :password, :role)
+        params.require(:user).permit(:email, :password)
       end
 
-      def create_profile(user)
-        case user.role
-        when 'admin'
-          user.create_admin_profile
-        when 'executive'
-          user.create_executive_profile(executive_profile_params)
-        end
+      def employee_user_params
+        params.require(:user).permit(:email, :password)
       end
 
       def executive_profile_params
@@ -86,18 +80,11 @@ module Api
       end
 
       def personal_info_params
-        params.require(:personal_info).permit(
-          :marital_status, :nationality, :birth_date, :identification_type,
-          :identification_number, :blood_type, :address, :phone_number,
-          :emergency_contact_name, :emergency_contact_phone
-        )
+        EmployeePermittedParams.personal_info_params(params.require(:personal_info))
       end
 
       def work_info_params
-        params.require(:work_info).permit(
-          :department, :position, :hire_date, :salary, :contract_type,
-          :work_schedule, :supervisor_name, :employee_id, :bank_account_number, :bank_name
-        )
+        EmployeePermittedParams.work_info_params(params.require(:work_info))
       end
 
       def authorize_executive
