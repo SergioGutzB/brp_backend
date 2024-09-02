@@ -1,0 +1,5 @@
+es:
+  hello: "Hola"
+  errors:
+    messages:
+      not_found: "no encontrado"

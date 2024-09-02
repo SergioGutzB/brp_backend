@@ -26,7 +26,7 @@ module EmployeePermittedParams
     contract_type
     working_hours_per_day
     salary_type
-    ocupation
+    occupation
     company_id
   ].freeze
 

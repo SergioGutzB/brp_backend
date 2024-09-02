@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::API
   respond_to :json
 
+  include ErrorHandler
   include Devise::Controllers::Helpers
   include ActionController::MimeResponds
 
