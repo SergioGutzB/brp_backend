@@ -7,6 +7,7 @@ module Api
       skip_before_action :verify_signed_out_user, only: :destroy
 
       def create
+        puts sign_in_params
         user = User.find_by_email(sign_in_params[:email])
 
         if user&.valid_password?(sign_in_params[:password])

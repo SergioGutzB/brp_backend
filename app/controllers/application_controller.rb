@@ -6,8 +6,6 @@ class ApplicationController < ActionController::API
   include Devise::Controllers::Helpers
   include ActionController::MimeResponds
 
-  before_action :authenticate_user!
-
   def authorize_admin
     unless current_user&.admin?
       render json: { error: 'Unauthorized. Admin access required.' }, status: :unauthorized
