@@ -45,6 +45,10 @@ module ErrorHandler
   end
 
   def exception_errors(exception)
-    render json: build_message(exception.message, code: exception.code), status: :unprocessable_entity
+    render json: custom_error(
+      exception.model,
+      build_message(exception.message, code: exception.code)
+    ),
+      status: :unprocessable_entity
   end
 end

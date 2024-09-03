@@ -42,7 +42,7 @@ module Employees
     end
 
     def company_error
-      raise ActiveRecord::RecordNotFound
+      raise ExceptionError.new('Company id not found', :company, :not_found)
     end
   end
 end
