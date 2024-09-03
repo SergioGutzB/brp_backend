@@ -13,7 +13,7 @@ module Api
       end
 
       def create
-        service = Employees::CreateEmployeeService.new(user_params, personal_info_params, work_info_params)
+        service = Employees::CreateService.new(user_params, personal_info_params, work_info_params)
         service.execute!
         render json: service, status: :created
       end

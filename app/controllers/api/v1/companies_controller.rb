@@ -7,12 +7,10 @@ module Api
       before_action :authorize_executive
 
       def create
-        @company = current_user.executive_profile.companies.new(company_params)
-        if @company.save
-          render json: @company, status: :created
-        else
-          render json: @company.errors, status: :unprocessable_entity
-        end
+        company = Companies::CreateService.new(current_user, permitted_params)
+        company.execute!
+
+        render json: company, status: :created
       end
 
       def index
@@ -22,8 +20,8 @@ module Api
 
       private
 
-      def company_params
-        params.require(:company).permit(:name)
+      def permitted_params
+        params.require(:company).permit(:name, :nit)
       end
     end
   end

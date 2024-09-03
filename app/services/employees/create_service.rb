@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Employees
-  class CreateEmployeeService
+  class CreateService
     include SchemaValidatable
 
     def initialize(user_parameters, personal_parameters, work_parameters)
@@ -42,7 +42,7 @@ module Employees
     end
 
     def company_error
-      raise ExceptionError.new('Company id not found', :company, :not_found)
+      raise ExceptionError.new(I18n.t('errors.messages.field_not_found', field: :company_id), :company, :not_found)
     end
   end
 end
