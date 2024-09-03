@@ -18,6 +18,12 @@ module Api
         render json: service, status: :created
       end
 
+      def update
+        service = Employees::UpdateService.new(params[:id], personal_info_params, work_info_params)
+        service.execute!
+        render json: service, status: :ok
+      end
+
       private
 
       def user_params
