@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EmployeePersonalProfile < ApplicationRecord
+class EmployeePersonalInfo < ApplicationRecord
   belongs_to :employee_profile
 
   validates :first_name, presence: { message: 'first_name_required' }

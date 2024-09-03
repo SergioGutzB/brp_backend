@@ -6,7 +6,7 @@ module Api
       before_action :set_user, only: %i[show update destroy]
       before_action :authorize_admin, only: %i[index destroy]
       before_action :authorize_executive, only: [:create_employee]
-      skip_before_action :authenticate_user!, only: [:create]
+      # skip_before_action :authenticate_user!, only: [:create]
 
       def index
         @users = User.all

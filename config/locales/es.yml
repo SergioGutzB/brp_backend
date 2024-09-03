@@ -2,7 +2,9 @@ es:
   hello: "Hola"
   errors:
     messages:
-      not_found: "no encontrado"
+      not_found: "%{model} no encontrado"
       field_not_found: "%{field} no encontrado"
       jwt_expired: "La sesión ha expirado"
       uniqueness: "%{attribute} ya existe"
+      record_invalid: "no es valido"
+      taken: "ya existe"

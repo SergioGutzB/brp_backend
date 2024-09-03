@@ -24,6 +24,10 @@ module BrpBackend
     config.load_defaults 7.0
     config.i18n.default_locale = :es
 
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

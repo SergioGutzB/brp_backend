@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EmployeeWorkProfile < ApplicationRecord
+class EmployeeWorkInfo < ApplicationRecord
   belongs_to :employee_profile
 
   validates :work_city, presence: { message: 'work_city_required' }

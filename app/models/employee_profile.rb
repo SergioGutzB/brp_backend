@@ -4,8 +4,8 @@ class EmployeeProfile < ApplicationRecord
   belongs_to :user
   belongs_to :company
 
-  has_one :personal_info, class_name: 'EmployeePersonalInfo'
-  has_one :work_info, class_name: 'EmployeeWorkInfo'
+  has_one :employee_personal_info
+  has_one :employee_work_info
 
-  accepts_nested_attributes_for :work_info, :personal_info
+  accepts_nested_attributes_for :employee_personal_info, :employee_work_info
 end

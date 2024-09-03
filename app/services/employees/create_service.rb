@@ -10,39 +10,79 @@ module Employees
       @work_parameters = work_parameters
     end
 
-    def execute!
-      @company = company(@work_parameters[:company_id])
-      return company_error if @company.nil?
+    def execute! # rubocop:disable Metrics/AbcSize
+      ActiveRecord::Base.transaction do
+        @company = find_company(@work_parameters[:company_id])
 
-      create_employee
+        @user = create_user
+        raise_error unless @user.persisted?
+
+        @employee = create_employee_profile
+        raise_error unless @employee.persisted?
+
+        create_employee_personal_info
+        create_employee_work_info
+
+        @employee
+      end
+    rescue ActiveRecord::RecordInvalid => exception
+      raise DetailedValidationError.new(exception.record.errors.messages,
+        exception.record.class.name.underscore)
     end
 
     private
 
-    def create_employee
-      @user = User.new(@user_parameters)
-      @user.role = 'employee'
-
-      if @user.save
-        @employee = EmployeeProfile.new(user_id: @user.id, company_id: @work_parameters[:company_id])
-        if @employee.save
-          @employee.create_personal_info(@personal_info_params)
-          @employee.create_work_info(@work_info_params)
-          @employee
-        else
-          { error: 'Employee could not be created' }
-        end
-      else
-        { error: 'User could not be created' }
-      end
-    end
-
-    def company(company_id)
-      Company.find_by(id: company_id)
+    def find_company(company_id)
+      Company.find_by!(id: company_id)
     end
 
     def company_error
-      raise ExceptionError.new(I18n.t('errors.messages.field_not_found', field: :company_id), :company, :not_found)
+      ExceptionError.new(I18n.t('errors.messages.field_not_found', field: :company_id), :company, :not_found)
+    end
+
+    def create_user
+      user = User.new(@user_parameters)
+      user.role = 'employee'
+      user.save!
+      user
+    end
+
+    def create_employee_profile
+      EmployeeProfile.create(user_id: @user.id, company_id: @company.id)
+    end
+
+    def create_employee_personal_info
+      parameters = build_personal_parameters
+      employee_personal_info = EmployeePersonalInfo.new(parameters)
+      employee_personal_info.save!
+    end
+
+    def create_employee_work_info
+      parameters = build_work_parameters
+      employee_work_info = EmployeeWorkInfo.new(parameters)
+      employee_work_info.save!
+    end
+
+    def build_work_parameters
+      parameters = @work_parameters.except(:company_id)
+      parameters.merge!(employee_profile_id: @employee.id)
+    end
+
+    def build_personal_parameters
+      parameters = @personal_parameters
+      parameters.merge!(employee_profile_id: @employee.id)
+    end
+
+    def valid_personal_parameters?(parameters)
+      EmployeePersonalInfo.new(parameters).valid?
+    end
+
+    def valid_work_parameters?(parameters)
+      EmployeeWorkInfo.new(parameters).valid?
+    end
+
+    def raise_error
+      raise ExceptionError.new('Failed to create records', :employee, :unprocessable_entity)
     end
   end
 end

@@ -10,29 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_03_071842) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_03_085011) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "admin_profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "admin_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_admin_profiles_on_user_id"
   end
 
-  create_table "companies", force: :cascade do |t|
+  create_table "companies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "nit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "executive_profile_id", null: false
+    t.uuid "executive_profile_id", null: false
     t.index ["executive_profile_id"], name: "index_companies_on_executive_profile_id"
     t.index ["nit"], name: "index_companies_on_nit", unique: true
   end
 
-  create_table "employee_personal_infos", force: :cascade do |t|
-    t.bigint "employee_profile_id", null: false
+  create_table "employee_personal_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "employee_profile_id", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "document_id"
@@ -50,15 +51,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_071842) do
     t.index ["employee_profile_id"], name: "index_employee_personal_infos_on_employee_profile_id"
   end
 
-  create_table "employee_profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "employee_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "company_id"
+    t.index ["company_id"], name: "index_employee_profiles_on_company_id"
     t.index ["user_id"], name: "index_employee_profiles_on_user_id"
   end
 
-  create_table "employee_work_infos", force: :cascade do |t|
-    t.bigint "employee_profile_id", null: false
+  create_table "employee_work_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "employee_profile_id", null: false
     t.string "work_city"
     t.string "work_state"
     t.string "seniority_company"
@@ -74,8 +77,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_071842) do
     t.index ["employee_profile_id"], name: "index_employee_work_infos_on_employee_profile_id"
   end
 
-  create_table "executive_profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "executive_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "full_name"
     t.string "nit"
     t.string "professional_card"
@@ -85,13 +88,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_071842) do
     t.index ["user_id"], name: "index_executive_profiles_on_user_id"
   end
 
-  create_table "jwt_denylists", force: :cascade do |t|
+  create_table "jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -112,6 +115,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_071842) do
   add_foreign_key "admin_profiles", "users"
   add_foreign_key "companies", "executive_profiles"
   add_foreign_key "employee_personal_infos", "employee_profiles"
+  add_foreign_key "employee_profiles", "companies"
   add_foreign_key "employee_profiles", "users"
   add_foreign_key "employee_work_infos", "employee_profiles"
   add_foreign_key "executive_profiles", "users"
