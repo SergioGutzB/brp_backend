@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_03_085011) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_05_203632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -20,6 +20,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_085011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_admin_profiles_on_user_id"
+  end
+
+  create_table "brps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.date "year", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_brps_on_company_id"
   end
 
   create_table "companies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -88,10 +96,44 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_085011) do
     t.index ["user_id"], name: "index_executive_profiles_on_user_id"
   end
 
+  create_table "form_types", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
+  end
+
+  create_table "questionnaires", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "questionnaire_id", null: false
+    t.uuid "form_type_id", null: false
+    t.text "text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["form_type_id"], name: "index_questions_on_form_type_id"
+    t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
+  end
+
+  create_table "responses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "brp_id", null: false
+    t.uuid "question_id", null: false
+    t.uuid "employee_profile_id", null: false
+    t.text "answer", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brp_id"], name: "index_responses_on_brp_id"
+    t.index ["employee_profile_id"], name: "index_responses_on_employee_profile_id"
+    t.index ["question_id"], name: "index_responses_on_question_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -113,10 +155,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_085011) do
   end
 
   add_foreign_key "admin_profiles", "users"
+  add_foreign_key "brps", "companies"
   add_foreign_key "companies", "executive_profiles"
   add_foreign_key "employee_personal_infos", "employee_profiles"
   add_foreign_key "employee_profiles", "companies"
   add_foreign_key "employee_profiles", "users"
   add_foreign_key "employee_work_infos", "employee_profiles"
   add_foreign_key "executive_profiles", "users"
+  add_foreign_key "questions", "form_types"
+  add_foreign_key "questions", "questionnaires"
+  add_foreign_key "responses", "brps"
+  add_foreign_key "responses", "employee_profiles"
+  add_foreign_key "responses", "questions"
 end
