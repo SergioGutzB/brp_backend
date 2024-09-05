@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_05_203632) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_05_224552) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -64,7 +64,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_05_203632) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "company_id"
+    t.uuid "form_type_id"
     t.index ["company_id"], name: "index_employee_profiles_on_company_id"
+    t.index ["form_type_id"], name: "index_employee_profiles_on_form_type_id"
     t.index ["user_id"], name: "index_employee_profiles_on_user_id"
   end
 
@@ -112,14 +114,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_05_203632) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "abbreviation"
   end
 
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "questionnaire_id", null: false
     t.uuid "form_type_id", null: false
-    t.text "text", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "number"
     t.index ["form_type_id"], name: "index_questions_on_form_type_id"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
@@ -159,6 +162,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_05_203632) do
   add_foreign_key "companies", "executive_profiles"
   add_foreign_key "employee_personal_infos", "employee_profiles"
   add_foreign_key "employee_profiles", "companies"
+  add_foreign_key "employee_profiles", "form_types"
   add_foreign_key "employee_profiles", "users"
   add_foreign_key "employee_work_infos", "employee_profiles"
   add_foreign_key "executive_profiles", "users"

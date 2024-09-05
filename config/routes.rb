@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       resources :admin_profiles, only: %i[index show create update destroy]
       resources :executive_profiles, only: %i[index show create update destroy]
       resources :employee_profiles, only: %i[index show create update destroy]
+      resources :questions
     end
   end
 end

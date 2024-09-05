@@ -1,0 +1,8 @@
+- name: "Factores de riesgo psicosocial intralaboral"
+  abbreviation: "FRPI"
+
+- name: "Factores de riesgo psicosocial extralaboral"
+  abbreviation: "FRPE"
+
+- name: "Evaluación del estrés"
+  abbreviation: "EE"
