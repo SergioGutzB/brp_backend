@@ -28,7 +28,7 @@ module Questions
 
     def translate_question_text(number)
       # Fetch the translated text for the given question number
-      I18n.t("form_types.#{ @form_type }.#{ @abbreviation }.#{ number }",
+      I18n.t("questions.#{ @form_type }.#{ @abbreviation }.#{ number }",
         default: "Translation missing for #{ number }")
     end
   end
