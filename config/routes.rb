@@ -24,6 +24,11 @@ Rails.application.routes.draw do
       resources :employee_profiles, only: %i[index show create update destroy]
       resources :questions
       resources :responses
+      resources :responses, only: [] do
+        collection do
+          post :import_from_csv
+        end
+      end
       resources :brps, only: [:create]
     end
   end

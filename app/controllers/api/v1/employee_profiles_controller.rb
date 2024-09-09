@@ -13,15 +13,16 @@ module Api
       end
 
       def create
-        service = Employees::CreateService.new(user_params, personal_info_params, work_info_params)
-        service.execute!
-        render json: service, status: :created
+        service = Employees::CreateService.new(user_params, personal_info_params, work_info_params,
+          employee_profile_params)
+        employee = service.execute!
+        render json: employee, status: :created
       end
 
       def update
         service = Employees::UpdateService.new(params[:id], personal_info_params, work_info_params)
-        service.execute!
-        render json: service, status: :ok
+        employee = service.execute!
+        render json: employee, status: :ok
       end
 
       def response_percentages
@@ -35,6 +36,10 @@ module Api
 
       def user_params
         params.require(:user).permit(:email, :password)
+      end
+
+      def employee_profile_params
+        params.require(:employee_profile).permit(:form_type)
       end
 
       def personal_info_params

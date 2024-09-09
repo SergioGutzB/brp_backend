@@ -4,10 +4,11 @@ module Employees
   class CreateService
     include SchemaValidatable
 
-    def initialize(user_parameters, personal_parameters, work_parameters)
+    def initialize(user_parameters, personal_parameters, work_parameters, profile_parameters)
       @user_parameters = user_parameters
       @personal_parameters = personal_parameters
       @work_parameters = work_parameters
+      @form_type_value = profile_parameters[:form_type]
     end
 
     def execute! # rubocop:disable Metrics/AbcSize
@@ -28,6 +29,8 @@ module Employees
     rescue ActiveRecord::RecordInvalid => exception
       raise DetailedValidationError.new(exception.record.errors.messages,
         exception.record.class.name.underscore)
+    rescue StandardError => exception
+      raise ExceptionError.new(exception.message, :employee, :unprocessable_entity)
     end
 
     private
@@ -48,7 +51,11 @@ module Employees
     end
 
     def create_employee_profile
-      EmployeeProfile.create(user_id: @user.id, company_id: @company.id)
+      EmployeeProfile.create(user_id: @user.id, company_id: @company.id, form_type:)
+    end
+
+    def form_type
+      FormType.find_by(name: @form_type_value || 'A')
     end
 
     def create_employee_personal_info
