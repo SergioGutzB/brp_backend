@@ -24,6 +24,13 @@ module Api
         render json: service, status: :ok
       end
 
+      def response_percentages
+        service = Employees::CalculateResponsePercentages.new(params[:id])
+        percentages = service.execute!
+
+        render json: percentages, status: :ok
+      end
+
       private
 
       def user_params

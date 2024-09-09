@@ -23,6 +23,8 @@ Rails.application.routes.draw do
       resources :executive_profiles, only: %i[index show create update destroy]
       resources :employee_profiles, only: %i[index show create update destroy]
       resources :questions
+      resources :responses
+      resources :brps, only: [:create]
     end
   end
 end

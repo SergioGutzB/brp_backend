@@ -1,0 +1,43 @@
+# frozen_string_literal: true
+
+module Responses
+  class CreateService
+    def initialize(employee_profile_id:, question_id:, brp_id:, answer:)
+      @employee_profile_id = employee_profile_id
+      @question_id = question_id
+      @brp_id = brp_id
+      @answer = answer
+    end
+
+    def call
+      raise ExceptionError.new(I18n.t('errors.messages.record_invalid'), :answer, :inclusion) unless valid_answer?
+
+      response = create_question
+
+      if response.save
+        { success: true, response: }
+      else
+        { success: false, errors: response.errors.full_messages }
+      end
+    end
+
+    private
+
+    def create_question
+      brp = Brp.find(@brp_id)
+      question = Question.find(@question_id)
+      employee_profile = EmployeeProfile.find(@employee_profile_id)
+
+      Response.create!(
+        brp:,
+        question:,
+        employee_profile:,
+        answer: @answer
+      )
+    end
+
+    def valid_answer?
+      Response::ANSWER_OPTIONS.include?(@answer)
+    end
+  end
+end

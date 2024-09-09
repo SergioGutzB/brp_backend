@@ -3,11 +3,16 @@
 module Brps
   class CreateService
     def initialize(params)
-      @params = params
+      @company_id = params[:company_id]
+      @year = params[:year]
     end
 
     def execute!
-      Brp.create!(@params)
+      company = Company.find(@company_id)
+
+      Brp.create!(company:, year: @year)
+    rescue ActiveRecord::RecordInvalid => exception
+      raise DetailedValidationError.new(exception.record.errors.messages, exception.record.class.name.underscore)
     end
   end
 end

@@ -1,5 +1,4 @@
 es:
-  hello: "Hola"
   errors:
     messages:
       not_found: "%{model} no encontrado"
@@ -8,3 +7,6 @@ es:
       uniqueness: "%{attribute} ya existe"
       record_invalid: "no es valido"
       taken: "ya existe"
+      inclusion: "no es un valor permitido"
+      already_answered: "ya respondido"
+      wrong_form_type: "Tipo de formulario incorrecto"

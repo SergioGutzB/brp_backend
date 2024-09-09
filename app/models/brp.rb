@@ -5,6 +5,14 @@ class Brp < ApplicationRecord
 
   validate :year_cannot_be_in_the_future
 
+  def year
+    self[:year]&.year
+  end
+
+  def year=(year)
+    self[:year] = Date.new(year.to_i, 1, 1)
+  end
+
   private
 
   def year_cannot_be_in_the_future

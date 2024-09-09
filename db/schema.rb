@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_05_224552) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_06_193010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -64,7 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_05_224552) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "company_id"
-    t.uuid "form_type_id"
+    t.uuid "form_type_id", null: false
     t.index ["company_id"], name: "index_employee_profiles_on_company_id"
     t.index ["form_type_id"], name: "index_employee_profiles_on_form_type_id"
     t.index ["user_id"], name: "index_employee_profiles_on_user_id"
