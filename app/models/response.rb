@@ -9,6 +9,7 @@ class Response < ApplicationRecord
   has_one :form_type, through: :employee_profile
 
   after_save :calculate_total
+  after_save :validate_negative_response
 
   ANSWER_OPTIONS = ['always', 'almost_always', 'sometimes', 'almost_never', 'never'].freeze
 
@@ -28,11 +29,14 @@ class Response < ApplicationRecord
   end
 
   def calculate_total
-    form_type = employee_profile.form_type.name
     question_number = question.number
     questionnaire_name = question.questionnaire.abbreviation
 
     total_score = calculate_for_question(form_type, questionnaire_name, question_number, answer)
     update_column(:total, total_score)
+  end
+
+  def form_type
+    employee_profile.form_type.name
   end
 end

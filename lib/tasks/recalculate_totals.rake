@@ -3,7 +3,7 @@
 namespace :responses do
   desc 'Recalcula el total de los responses que tienen el total en null'
   task recalculate_totals: :environment do
-    responses = Response.all
+    responses = Response.where(id: '6a9a7fb9-df81-49e5-a392-73913ddbb835')
 
     responses.find_each do |response|
       form_type = response.employee_profile.form_type.name
