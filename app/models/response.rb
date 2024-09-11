@@ -5,6 +5,11 @@ class Response < ApplicationRecord
   belongs_to :question
   belongs_to :employee_profile
 
+  has_one :questionnaire, through: :question
+  has_one :form_type, through: :employee_profile
+
+  after_save :calculate_total
+
   ANSWER_OPTIONS = ['always', 'almost_always', 'sometimes', 'almost_never', 'never'].freeze
 
   validates :answer, presence: true, inclusion: { in: ANSWER_OPTIONS }
@@ -20,5 +25,14 @@ class Response < ApplicationRecord
     if question.form_type_id != employee_profile.form_type_id
       errors.add(:question_id, I18n.t('errors.messages.wrong_form_type'))
     end
+  end
+
+  def calculate_total
+    form_type = employee_profile.form_type.name
+    question_number = question.number
+    questionnaire_name = question.questionnaire.abbreviation
+
+    total_score = calculate_for_question(form_type, questionnaire_name, question_number, answer)
+    update_column(:total, total_score)
   end
 end

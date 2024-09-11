@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_06_193010) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_10_194120) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -134,6 +134,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_06_193010) do
     t.text "answer", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total"
     t.index ["brp_id"], name: "index_responses_on_brp_id"
     t.index ["employee_profile_id"], name: "index_responses_on_employee_profile_id"
     t.index ["question_id"], name: "index_responses_on_question_id"
