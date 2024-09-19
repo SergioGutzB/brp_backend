@@ -4,7 +4,12 @@ module Results
   module Factors
     module Frpe
       # pag. 150
-      TRANSFORMATION_FACTORS = {
+      TRANSFORMATION_TOTAL_FACTORS = {
+        A: 124,
+        B: 124
+      }.freeze
+
+      TRANSFORMATION_DIMENSION_FACTORS = {
          tft: 16,
          rf: 12,
          cri: 20,

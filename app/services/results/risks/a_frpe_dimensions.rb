@@ -46,7 +46,7 @@ module Results
         end
       end
 
-      def risk_seg_f
+      def risk_segf
         case total
         when 50.1..Float::INFINITY then :very_high
         when 33.4..50.0 then :high

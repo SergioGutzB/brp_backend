@@ -13,7 +13,12 @@ module Results
         rt: { A: 44, B: 40 }
       }.freeze
 
-      TRANSFORMATION_FACTORS = {
+      TRANSFORMATION_TOTAL_FACTORS = {
+       A: 492,
+       B: 388
+      }.freeze
+
+      TRANSFORMATION_DIMENSION_FACTORS = {
          lrst: {
            cl: {
              A: 52,
