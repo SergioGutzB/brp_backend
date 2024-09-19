@@ -9,10 +9,10 @@ module Results
     end
 
     def call
-      if form_type == 'FRPI'
+      if questionnaire == 'FRPI'
         frpi_totals
       else
-        dimension_totals
+        dimension_scores
       end
     end
 
@@ -25,15 +25,15 @@ module Results
       raw_score = total_frpi_raw_score(score)
 
       totals = {}
-      totals['score'] = score
-      totals['raw'] = raw_score
-      totals['risk'] = domain_risk(raw_score * 100)
+      totals[:score] = score
+      totals[:raw] = raw_score
+      totals[:risk] = domain_risk(raw_score * 100)
 
       totals
     end
 
     def total_score(dimensions)
-      dimensions.sum { |_key, value| value['score'] }
+      dimensions.sum { |_key, value| value[:score] }
     end
 
     def total_frpi_raw_score(score)

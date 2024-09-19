@@ -24,9 +24,9 @@ module Results
       raw_score = total_frpe_raw_score(score)
 
       totals = {}
-      totals['score'] = score
-      totals['raw'] = raw_score
-      totals['risk'] = domain_risk(raw_score * 100)
+      totals[:score] = score
+      totals[:raw] = raw_score
+      totals[:risk] = domain_risk(raw_score * 100)
 
       totals
     end
@@ -37,9 +37,9 @@ module Results
         score = total_score(dimensions)
         raw_score = total_frpi_raw_score(domain, score)
         totals[domain] = {}
-        totals[domain]['score'] = score
-        totals[domain]['raw'] = raw_score
-        totals[domain]['risk'] = domain_risk(domain, raw_score * 100)
+        totals[domain][:score] = score
+        totals[domain][:raw] = raw_score
+        totals[domain][:risk] = domain_risk(domain, raw_score * 100)
       end
       totals
     end
