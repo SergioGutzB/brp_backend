@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Results
-  module Domains
-    module FrpeDomains
-      DOMAINS = {
+  module Dimensions
+    module Frpe
+      DIMENSIONS = {
          tft: [14, 15, 16, 17],
          rf: [22, 25, 27],
          cri: [18, 19, 20, 21, 23],

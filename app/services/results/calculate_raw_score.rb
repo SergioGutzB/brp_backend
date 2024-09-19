@@ -11,47 +11,61 @@ module Results
 
     def call
       if @questionnaire == 'EE'
-        calculate_totals_for_ee(build_klass::DOMAINS)
+        calculate_totals_for_ee(build_klass::DIMENSIONS)
       else
-        calculate_totals(build_klass::DOMAINS)
+        calculate_totals(build_klass::DIMENSIONS)
       end
     end
 
     private
 
-    def build_klass
-      "Results::Domains::#{ @questionnaire.capitalize }Domains".constantize
-    end
-
-    def calculate_totals(domains)
+    def calculate_totals(dimensions)
       result = {}
 
-      domains.each do |key, value|
+      dimensions.each do |key, value|
         if @questionnaire == 'FRPI'
-          result[key] = calculate_for_domain(value)
+          result[key] = calculate_for_domain_for_frpi(value, key)
         elsif @questionnaire == 'FRPE'
-          result[key] = calculate_for_form_type(value)
+          result[key] = calculate_for_domain_for_frpe(value, key)
         end
       end
 
       result
     end
 
-    def calculate_totals_for_ee(domains)
-      results = 0
+    def calculate_totals_for_ee(dimensions)
+      score = 0
 
-      domains.each do |key, value|
-        results += calculate_total_avegarage(value) * key.to_s.to_i
+      dimensions.each do |key, value|
+        score += calculate_total_avegarage(value) * key.to_s.to_i
       end
+      dimension_score = calculate_dimension_score_for_ee(score)
 
-      results
+      {
+        score:,
+        dimension_score:
+      }
     end
 
-    def calculate_for_domain(domain)
+    def calculate_for_domain_for_frpe(value, key)
+      score = calculate_for_form_type(value)
+      dimension_score = calculate_dimension_score_for_frpe(score, key)
+
+      { score:, dimension_score: }
+    end
+
+    # Only for FRPI
+    def calculate_for_domain_for_frpi(dimensions, key)
       totals = {}
 
-      domain.each do |sub_key, forms|
-        totals[sub_key] = calculate_for_form_type(forms[@form_type.to_sym])
+      dimensions.each do |sub_key, forms|
+        score = calculate_for_form_type(forms[@form_type.to_sym])
+        dimension_score = calculate_dimension_score_for_frpi(score, key, sub_key, @form_type.to_sym)
+
+        totals[sub_key] = {
+          score:,
+          dimension_score:
+        }
       end
 
       totals
@@ -65,11 +79,43 @@ module Results
         form_type: FormType.find_by(name: @form_type),
         questionnaire: Questionnaire.find_by(abbreviation: @questionnaire)
       ).pluck(:id)
+
       @responses.where(question_id: question_ids).sum(:total)
     end
 
     def calculate_total_avegarage(question_numbers)
       calculate_for_form_type(question_numbers).to_f / question_numbers.count
+    end
+
+    # Pag. 81, Tabla 25: Factores de transformación para las dimensiones de las formas A y B.
+    def calculate_dimension_score_for_frpi(score, key, domain, form_type)
+      factors = build_factor_klass::TRANSFORMATION_FACTORS
+      factor = factors[key][domain][form_type]
+      calculate_factor(score, factor)
+    end
+
+    # Pag. 150
+    def calculate_dimension_score_for_frpe(score, domain)
+      factors = build_factor_klass::TRANSFORMATION_FACTORS
+      factor = factors[domain]
+      calculate_factor(score, factor)
+    end
+
+    def calculate_dimension_score_for_ee(score)
+      factor = build_factor_klass::TRANSFORMATION_FACTORS
+      calculate_factor(score, factor)
+    end
+
+    def calculate_factor(score, factor)
+      (score.to_f / factor).round(3)
+    end
+
+    def build_factor_klass
+      "Results::Factors::#{ @questionnaire.capitalize }".constantize
+    end
+
+    def build_klass
+      "Results::Dimensions::#{ @questionnaire.capitalize }".constantize
     end
   end
 end

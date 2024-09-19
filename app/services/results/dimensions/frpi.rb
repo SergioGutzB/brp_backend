@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Results
-  module Domains
-    module FrpiDomains
+  module Dimensions
+    module Frpi
       # Tabla: 23 Ítems que integran cada dimensión del cuestionario de factores de riesgo
       # psicosocial intralaboral (formas A y B).
       #
-      DOMAINS = {
+      DIMENSIONS = {
          lrst: {
            cl: {
               A: [63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75],
