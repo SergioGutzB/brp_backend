@@ -2,199 +2,212 @@
 
 module Results
   module Risks
-    class AFrpiDimensions
-      RISK = {
-        very_high: 'VeryHigh',
-        high: 'High',
-        medium: 'Medium',
-        low: 'Low',
-        very_low: 'VeryLow'
-      }.freeze
-
+    class AFrpiDimensions # rubocop:disable Metrics/ClassLength
       def initialize(total, domain)
         @total = total
         @domain = domain
       end
 
       def call
-        send("risk_#{ @domain.downcase }")
+        send("risk_#{ domain.downcase }")
       end
 
       private
 
+      attr_reader :total, :domain
+
       # LRST
       def risk_lrst_cl
-        return RISK[:very_high] if @total >= 46.3
-        return RISK[:high] if @total >= 30.9
-        return RISK[:medium] if @total >= 15.5
-        return RISK[:low] if @total >= 3.9
-
-        RISK[:very_low]
+        case total
+        when 46.3..Float::INFINITY then :very_high
+        when 30.9..46.2 then :high
+        when 15.5..30.8 then :medium
+        when 3.9..15.4 then :low
+        else :very_low
+        end
       end
 
       def risk_lrst_rst
-        return RISK[:very_high] if @total >= 37.6
-        return RISK[:high] if @total >= 25.1
-        return RISK[:medium] if @total >= 16.2
-        return RISK[:low] if @total >= 5.5
-
-        RISK[:very_low]
+        case total
+        when 37.6..Float::INFINITY then :very_high
+        when 25.1..37.5 then :high
+        when 16.2..25.0 then :medium
+        when 5.5..16.1 then :low
+        else :very_low
+        end
       end
 
       def risk_lrst_rd
-        return RISK[:very_high] if @total >= 55.1
-        return RISK[:high] if @total >= 40.1
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 10.1
-
-        RISK[:very_low]
+        case total
+        when 55.1..Float::INFINITY then :very_high
+        when 40.1..55.0 then :high
+        when 25.1..40.0 then :medium
+        when 10.1..25.0 then :low
+        else :very_low
+        end
       end
 
       def risk_lrst_rc
-        return RISK[:very_high] if @total >= 47.3
-        return RISK[:high] if @total >= 33.4
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 14.0
-
-        RISK[:very_low]
+        case total
+        when 47.3..Float::INFINITY then :very_high
+        when 33.4..47.2 then :high
+        when 25.1..33.3 then :medium
+        when 14.0..25.0 then :low
+        else :very_low
+        end
       end
 
       # CST
       def risk_cst_cr
-        return RISK[:very_high] if @total >= 39.4
-        return RISK[:high] if @total >= 21.5
-        return RISK[:medium] if @total >= 10.8
-        return RISK[:low] if @total >= 1.0
-
-        RISK[:very_low]
+        case total
+        when 39.4..Float::INFINITY then :very_high
+        when 21.5..39.3 then :high
+        when 10.8..21.4 then :medium
+        when 1.0..10.7 then :low
+        else :very_low
+        end
       end
 
       def risk_cst_c
-        return RISK[:very_high] if @total >= 50.1
-        return RISK[:high] if @total >= 33.4
-        return RISK[:medium] if @total >= 16.8
-        return RISK[:low] if @total >= 1.0
-
-        RISK[:very_low]
+        case total
+        when 50.1..Float::INFINITY then :very_high
+        when 33.4..50.0 then :high
+        when 16.8..33.3 then :medium
+        when 1.0..16.7 then :low
+        else :very_low
+        end
       end
 
       def risk_cst_pmc
-        return RISK[:very_high] if @total >= 50.1
-        return RISK[:high] if @total >= 37.6
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 12.6
-
-        RISK[:very_low]
+        case total
+        when 50.1..Float::INFINITY then :very_high
+        when 37.6..50.0 then :high
+        when 25.1..37.5 then :medium
+        when 12.6..25.0 then :low
+        else :very_low
+        end
       end
 
       def risk_cst_odhc
-        return RISK[:very_high] if @total >= 31.4
-        return RISK[:high] if @total >= 18.9
-        return RISK[:medium] if @total >= 6.4
-        return RISK[:low] if @total >= 1.0
-
-        RISK[:very_low]
+        case total
+        when 31.4..Float::INFINITY then :very_high
+        when 18.9..31.3 then :high
+        when 6.4..18.8 then :medium
+        when 1.0..6.3 then :low
+        else :very_low
+        end
       end
 
       def risk_cst_cat
-        return RISK[:very_high] if @total >= 58.4
-        return RISK[:high] if @total >= 41.8
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 8.4
-
-        RISK[:very_low]
+        case total
+        when 58.4..Float::INFINITY then :very_high
+        when 41.8..58.3 then :high
+        when 25.1..41.7 then :medium
+        when 8.4..25.0 then :low
+        else :very_low
+        end
       end
 
       # DT
       def risk_dt_daef
-        return RISK[:very_high] if @total >= 39.7
-        return RISK[:high] if @total >= 31.4
-        return RISK[:medium] if @total >= 23.0
-        return RISK[:low] if @total >= 14.7
-
-        RISK[:very_low]
+        case total
+        when 39.7..Float::INFINITY then :very_high
+        when 31.4..39.6 then :high
+        when 23.0..31.3 then :medium
+        when 14.7..22.9 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_de
-        return RISK[:very_high] if @total >= 47.3
-        return RISK[:high] if @total >= 33.4
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 16.8
-
-        RISK[:very_low]
+        case total
+        when 47.3..Float::INFINITY then :very_high
+        when 33.4..47.2 then :high
+        when 25.1..33.3 then :medium
+        when 16.8..25.0 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_dc
-        return RISK[:very_high] if @total >= 54.3
-        return RISK[:high] if @total >= 45.9
-        return RISK[:medium] if @total >= 33.4
-        return RISK[:low] if @total >= 25.1
-
-        RISK[:very_low]
+        case total
+        when 54.3..Float::INFINITY then :very_high
+        when 45.9..54.2 then :high
+        when 33.4..45.8 then :medium
+        when 25.1..33.3 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_itsee
-        return RISK[:very_high] if @total >= 50.1
-        return RISK[:high] if @total >= 43.9
-        return RISK[:medium] if @total >= 31.4
-        return RISK[:low] if @total >= 18.9
-
-        RISK[:very_low]
+        case total
+        when 50.1..Float::INFINITY then :very_high
+        when 43.9..50.0 then :high
+        when 31.4..43.8 then :medium
+        when 18.9..31.3 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_erc
-        return RISK[:very_high] if @total >= 79.3
-        return RISK[:high] if @total >= 66.8
-        return RISK[:medium] if @total >= 54.3
-        return RISK[:low] if @total >= 37.6
-
-        RISK[:very_low]
+        case total
+        when 79.3..Float::INFINITY then :very_high
+        when 66.8..79.2 then :high
+        when 54.3..66.7 then :medium
+        when 37.6..54.2 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_dcm
-        return RISK[:very_high] if @total >= 90.1
-        return RISK[:high] if @total >= 80.1
-        return RISK[:medium] if @total >= 70.1
-        return RISK[:low] if @total >= 60.1
-
-        RISK[:very_low]
+        case total
+        when 90.1..Float::INFINITY then :very_high
+        when 80.1..90.0 then :high
+        when 70.1..80.0 then :medium
+        when 60.1..70.0 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_cr
-        return RISK[:very_high] if @total >= 45.1
-        return RISK[:high] if @total >= 35.1
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 15.1
-
-        RISK[:very_low]
+        case total
+        when 45.1..Float::INFINITY then :very_high
+        when 35.1..45.0 then :high
+        when 25.1..35.0 then :medium
+        when 15.1..25.0 then :low
+        else :very_low
+        end
       end
 
       def risk_dt_djt
-        return RISK[:very_high] if @total >= 50.1
-        return RISK[:high] if @total >= 33.4
-        return RISK[:medium] if @total >= 25.1
-        return RISK[:low] if @total >= 8.4
-
-        RISK[:very_low]
+        case total
+        when 50.1..Float::INFINITY then :very_high
+        when 33.4..50.0 then :high
+        when 25.1..33.3 then :medium
+        when 8.4..25.0 then :low
+        else :very_low
+        end
       end
 
       # RT
       def risk_rt_rdpotr
-        return RISK[:very_high] if @total >= 20.1
-        return RISK[:high] if @total >= 10.1
-        return RISK[:medium] if @total >= 5.1
-        return RISK[:low] if @total >= 1.0
-
-        RISK[:very_low]
+        case total
+        when 20.1..Float::INFINITY then :very_high
+        when 10.1..20.0 then :high
+        when 5.1..10.0 then :medium
+        when 1.0..5.0 then :low
+        else :very_low
+        end
       end
 
       def risk_rt_rc
-        return RISK[:very_high] if @total >= 37.6
-        return RISK[:high] if @total >= 25.1
-        return RISK[:medium] if @total >= 16.8
-        return RISK[:low] if @total >= 4.3
-
-        RISK[:very_low]
+        case total
+        when 37.6..Float::INFINITY then :very_high
+        when 25.1..37.5 then :high
+        when 16.8..25.0 then :medium
+        when 4.3..16.7 then :low
+        else :very_low
+        end
       end
     end
   end

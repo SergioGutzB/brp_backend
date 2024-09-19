@@ -2,19 +2,19 @@
 
 module Results
   module Risks
-    class AFrpeDimensions
-      def initialize(total, domain)
+    class BFrpeDimensions
+      def initialize(total, dimension)
         @total = total
-        @domain = domain
+        @dimension = dimension
       end
 
       def call
-        send("risk_#{ domain.downcase }")
+        send("risk_#{ dimension.downcase }")
       end
 
       private
 
-      attr_reader :total, :domain
+      attr_reader :total, :dimension
 
       def risk_tft
         case total
@@ -36,17 +36,7 @@ module Results
         end
       end
 
-      def risk_cri
-        case total
-        when 30.1..Float::INFINITY then :very_high
-        when 20.1..30.0 then :high
-        when 10.1..20.0 then :medium
-        when 1.0..10.0 then :low
-        else :very_low
-        end
-      end
-
-      def risk_seg_f
+      def risk_segf
         case total
         when 50.1..Float::INFINITY then :very_high
         when 33.4..50.0 then :high
@@ -56,11 +46,21 @@ module Results
         end
       end
 
+      def risk_cri
+        case total
+        when 35.1..Float::INFINITY then :very_high
+        when 25.1..35.0 then :high
+        when 15.1..25.0 then :medium
+        when 5.1..15.0 then :low
+        else :very_low
+        end
+      end
+
       def risk_cve
         case total
-        when 22.3..Float::INFINITY then :very_high
-        when 14.0..22.2 then :high
-        when 11.2..13.9 then :medium
+        when 27.9..Float::INFINITY then :very_high
+        when 16.8..27.8 then :high
+        when 11.2..16.7 then :medium
         when 5.7..11.1 then :low
         else :very_low
         end
@@ -71,7 +71,7 @@ module Results
         when 41.8..Float::INFINITY then :very_high
         when 25.1..41.7 then :high
         when 16.8..25.0 then :medium
-        when 8.4..16.7 then :low
+        when 1.0..16.7 then :low
         else :very_low
         end
       end

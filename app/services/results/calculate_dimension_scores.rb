@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Results
-  class CalculateRawScore
+  class CalculateDimensionScores
     def initialize(employee_profile, questionnaire)
       @employee_profile = employee_profile
       @responses = Response.where(employee_profile: @employee_profile)
@@ -24,9 +24,9 @@ module Results
 
       dimensions.each do |key, value|
         if @questionnaire == 'FRPI'
-          result[key] = calculate_for_domain_for_frpi(value, key)
+          result[key] = calculate_for_dimension_for_frpi(value, key)
         elsif @questionnaire == 'FRPE'
-          result[key] = calculate_for_domain_for_frpe(value, key)
+          result[key] = calculate_for_dimension_for_frpe(value, key)
         end
       end
 
@@ -47,7 +47,7 @@ module Results
       }
     end
 
-    def calculate_for_domain_for_frpe(value, key)
+    def calculate_for_dimension_for_frpe(value, key)
       score = calculate_for_form_type(value)
       dimension_score = calculate_dimension_score_for_frpe(score, key)
 
@@ -55,7 +55,7 @@ module Results
     end
 
     # Only for FRPI
-    def calculate_for_domain_for_frpi(dimensions, key)
+    def calculate_for_dimension_for_frpi(dimensions, key)
       totals = {}
 
       dimensions.each do |sub_key, forms|
@@ -88,16 +88,16 @@ module Results
     end
 
     # Pag. 81, Tabla 25: Factores de transformación para las dimensiones de las formas A y B.
-    def calculate_dimension_score_for_frpi(score, key, domain, form_type)
+    def calculate_dimension_score_for_frpi(score, key, dimension, form_type)
       factors = build_factor_klass::TRANSFORMATION_FACTORS
-      factor = factors[key][domain][form_type]
+      factor = factors[key][dimension][form_type]
       calculate_factor(score, factor)
     end
 
     # Pag. 150
-    def calculate_dimension_score_for_frpe(score, domain)
+    def calculate_dimension_score_for_frpe(score, dimension)
       factors = build_factor_klass::TRANSFORMATION_FACTORS
-      factor = factors[domain]
+      factor = factors[dimension]
       calculate_factor(score, factor)
     end
 

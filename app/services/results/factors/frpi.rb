@@ -3,6 +3,16 @@
 module Results
   module Factors
     module Frpi
+      # Tabla 26. Factores de transformación para los dominios de las formas A y B
+      # pag. 82
+      #
+      TRANSFORMATION_DOMAIN_FACTORS = {
+        lrst: { A: 164, B: 120 },
+        cst: { A: 84, B: 72 },
+        dt: { A: 200, B: 156 },
+        rt: { A: 44, B: 40 }
+      }.freeze
+
       TRANSFORMATION_FACTORS = {
          lrst: {
            cl: {
