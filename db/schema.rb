@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_10_194120) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -140,6 +140,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_10_194120) do
     t.index ["question_id"], name: "index_responses_on_question_id"
   end
 
+  create_table "results", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "totals", default: {}
+    t.integer "status", default: 0
+    t.jsonb "progress", default: {"ee"=>0, "frpe"=>0, "frpi"=>0}
+    t.uuid "employee_profile_id", null: false
+    t.uuid "brp_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brp_id"], name: "index_results_on_brp_id"
+    t.index ["employee_profile_id"], name: "index_results_on_employee_profile_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -172,4 +184,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_10_194120) do
   add_foreign_key "responses", "brps"
   add_foreign_key "responses", "employee_profiles"
   add_foreign_key "responses", "questions"
+  add_foreign_key "results", "brps"
+  add_foreign_key "results", "employee_profiles"
 end

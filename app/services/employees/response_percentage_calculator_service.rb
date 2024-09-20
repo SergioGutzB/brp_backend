@@ -33,8 +33,12 @@ module Employees
       question_counts_for_form_type.each do |type, total_questions|
         answered = response_counts[type] || 0
         percentage = (answered.to_f / total_questions * 100).round(2)
-        percentages[type] = percentage
+        percentages[type.to_sym] = percentage
       end
+
+      total = percentages.values.sum
+
+      percentages[:total] = (total.to_f / 3).round(2)
 
       percentages
     end

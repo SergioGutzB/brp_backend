@@ -9,7 +9,8 @@ class Response < ApplicationRecord
   has_one :form_type, through: :employee_profile
 
   after_save :calculate_total
-  after_save :validate_negative_response
+  after_save :check_completion_and_update_results
+  # after_save :validate_negative_response
 
   ANSWER_OPTIONS = ['always', 'almost_always', 'sometimes', 'almost_never', 'never'].freeze
 
@@ -32,11 +33,48 @@ class Response < ApplicationRecord
     question_number = question.number
     questionnaire_name = question.questionnaire.abbreviation
 
-    total_score = calculate_for_question(form_type, questionnaire_name, question_number, answer)
+    total_score = Responses::CalculateResponseTotalService.new(
+      form_type,
+      questionnaire_name,
+      question_number,
+      answer
+    ).call
+
     update_column(:total, total_score)
   end
 
   def form_type
     employee_profile.form_type.name
+  end
+
+  def check_completion_and_update_results
+    if all_questions_answered?
+      calculate_and_save_totals
+    else
+      update_completion_percentage
+    end
+  end
+
+  def percentages
+    @percentages ||= Employees::ResponsePercentageCalculatorService.new(employee_profile.id).execute!
+  end
+
+  def all_questions_answered?
+    percentages[:total] == 100
+  end
+
+  def calculate_and_save_totals
+    totals = Results::EmployeesTotalsService.new(employee_profile.id).call
+    progress = percentages.except(:total).transform_keys { |key| key.to_s.downcase.to_sym }
+
+    result = Result.find_or_initialize_by(employee_profile:, brp:)
+    result.update(totals:, status: 'completed', progress:)
+  end
+
+  def update_completion_percentage
+    progress = percentages.except(:total).transform_keys { |key| key.to_s.downcase.to_sym }
+
+    result = Result.find_or_initialize_by(employee_profile:, brp:)
+    result.update(progress:, status: 'in_progress')
   end
 end
