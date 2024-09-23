@@ -4,11 +4,13 @@ class EmployeeProfile < ApplicationRecord
   belongs_to :user
   belongs_to :company
   belongs_to :form_type
+  belongs_to :headquarters, optional: true
+  belongs_to :area, optional: true
 
   has_one :employee_personal_info
   has_one :employee_work_info
-
   has_many :responses
+  has_many :results
 
   accepts_nested_attributes_for :employee_personal_info, :employee_work_info
 
@@ -18,6 +20,8 @@ class EmployeeProfile < ApplicationRecord
     questionnaire_types = %w[FRPI FRPE EE]
 
     counts = Hash.new(0)
+
+    puts "form_type_id: #{ form_type_id } (#{ form_type.name })"
 
     questionnaire_types.each do |type|
       questionnaire = Questionnaire.find_by(abbreviation: type)

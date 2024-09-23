@@ -39,7 +39,7 @@ module Results
         totals[domain] = {}
         totals[domain][:score] = score
         totals[domain][:raw] = raw_score
-        totals[domain][:risk] = domain_risk(domain, raw_score * 100)
+        totals[domain][:risk] = domain_risk(raw_score * 100, domain)
       end
       totals
     end
@@ -61,11 +61,11 @@ module Results
     end
 
     def domain_risk(score, domain = nil)
-      klass = Results::Risks::AFrpeDomains
-      case questionnaire
-      when 'FRPI' && domain
+      klass = "Results::Risks::#{ form_type.upcase }#{ questionnaire.capitalize }Domains".constantize
+      if !domain.nil?
+        puts "klass: #{ klass }, domain: #{ domain }, score: #{ score }"
         klass.new(score, domain).call
-      when 'FRPE'
+      else
         klass.new(score).call
       end
     end

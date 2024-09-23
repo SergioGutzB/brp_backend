@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_23_214808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -20,6 +20,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_admin_profiles_on_user_id"
+  end
+
+  create_table "areas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "company_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_areas_on_company_id"
   end
 
   create_table "brps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -65,8 +73,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
     t.datetime "updated_at", null: false
     t.uuid "company_id"
     t.uuid "form_type_id", null: false
+    t.uuid "headquarters_id"
+    t.uuid "area_id"
+    t.boolean "emotional_demands"
+    t.boolean "relationship_with_collaborators"
+    t.index ["area_id"], name: "index_employee_profiles_on_area_id"
     t.index ["company_id"], name: "index_employee_profiles_on_company_id"
     t.index ["form_type_id"], name: "index_employee_profiles_on_form_type_id"
+    t.index ["headquarters_id"], name: "index_employee_profiles_on_headquarters_id"
     t.index ["user_id"], name: "index_employee_profiles_on_user_id"
   end
 
@@ -104,6 +118,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "headquarters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "company_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_headquarters_on_company_id"
+  end
+
   create_table "jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp", null: false
@@ -137,6 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
     t.integer "total"
     t.index ["brp_id"], name: "index_responses_on_brp_id"
     t.index ["employee_profile_id"], name: "index_responses_on_employee_profile_id"
+    t.index ["question_id", "employee_profile_id"], name: "index_responses_on_question_id_and_employee_profile_id", unique: true
     t.index ["question_id"], name: "index_responses_on_question_id"
   end
 
@@ -171,14 +194,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_20_150258) do
   end
 
   add_foreign_key "admin_profiles", "users"
+  add_foreign_key "areas", "companies"
   add_foreign_key "brps", "companies"
   add_foreign_key "companies", "executive_profiles"
   add_foreign_key "employee_personal_infos", "employee_profiles"
+  add_foreign_key "employee_profiles", "areas"
   add_foreign_key "employee_profiles", "companies"
   add_foreign_key "employee_profiles", "form_types"
+  add_foreign_key "employee_profiles", "headquarters", column: "headquarters_id"
   add_foreign_key "employee_profiles", "users"
   add_foreign_key "employee_work_infos", "employee_profiles"
   add_foreign_key "executive_profiles", "users"
+  add_foreign_key "headquarters", "companies"
   add_foreign_key "questions", "form_types"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "responses", "brps"

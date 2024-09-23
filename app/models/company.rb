@@ -5,4 +5,6 @@ class Company < ApplicationRecord
 
   has_many :employee_profiles
   has_many :brps
+  has_many :headquarters
+  has_many :areas
 end

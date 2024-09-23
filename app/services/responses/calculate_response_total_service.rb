@@ -7,22 +7,35 @@
 module Responses
   class CalculateResponseTotalService
     ANSWER_OPTIONS = ['always', 'almost_always', 'sometimes', 'almost_never', 'never'].freeze
+    NEGATIVE_RESPONSES_LRST_DE = [89, 90, 91, 92, 93, 94, 95, 96, 97].freeze
+    NEGATIVE_RESPONSES_LRST_RC = [115, 116, 117, 118, 119, 120, 121, 122, 123].freeze
 
-    def initialize(form_type, questionnaire_name, question_number, response_value)
+    def initialize(form_type:, questionnaire_name:, question_number:, answer:, negative_lrst_dc: false, negative_lrst_rc: false) # rubocop:disable Metrics/ParameterLists
       @form_type = form_type # A | B
       @question_number = question_number
-      @response_value = response_value
+      @response_value = answer
       @questionnaire_name = questionnaire_name
+      @negative_lrst_dc = negative_lrst_dc
+      @negative_lrst_rc = negative_lrst_rc
     end
 
     def call
       options_module = get_options_module(@questionnaire_name)
-
       multiplier = find_multiplier_for_question(options_module)
+
+      return 0 if validate_negatives
+
       calculate_total(multiplier)
     end
 
     private
+
+    attr_reader :negative_lrst_dc, :negative_lrst_rc
+
+    def validate_negatives
+      NEGATIVE_RESPONSES_LRST_DE.include?(@question_number) && negative_lrst_dc ||
+        NEGATIVE_RESPONSES_LRST_RC.include?(@question_number) && negative_lrst_rc
+    end
 
     def get_options_module(questionnaire_name)
       module_name = "Responses::#{ questionnaire_name.capitalize }Options"

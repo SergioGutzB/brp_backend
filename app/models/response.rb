@@ -10,7 +10,7 @@ class Response < ApplicationRecord
 
   after_save :calculate_total
   after_save :check_completion_and_update_results
-  # after_save :validate_negative_response
+  after_save :validate_negative_response
 
   ANSWER_OPTIONS = ['always', 'almost_always', 'sometimes', 'almost_never', 'never'].freeze
 
@@ -34,14 +34,18 @@ class Response < ApplicationRecord
     questionnaire_name = question.questionnaire.abbreviation
 
     total_score = Responses::CalculateResponseTotalService.new(
-      form_type,
-      questionnaire_name,
-      question_number,
-      answer
+      form_type:,
+      questionnaire_name:,
+      question_number:,
+      answer:,
+      negative_lrst_dc: employee_profile.emotional_demans,
+      negative_lrst_rc: employee_profile.relationship_with_collaborators
     ).call
 
     update_column(:total, total_score)
   end
+
+  validate
 
   def form_type
     employee_profile.form_type.name

@@ -21,7 +21,7 @@ module Employees
 
     private
 
-    def calculate_response_percentages
+    def calculate_response_percentages # rubocop:disable Metrics/AbcSize
       response_counts = employee_profile.responses_count_by_questionnaire
 
       form_type_key = employee_profile.form_type.name # Assuming 'name' is either 'A' or 'B'

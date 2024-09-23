@@ -116,7 +116,6 @@ module Results
 
     def dimension_risk(score, domain = nil, dimension = nil)
       klass = build_risk_klass
-      puts "klass: #{ klass }"
       if domain && dimension && questionnaire == 'FRPI'
         klass.new(score * 100, "#{ domain }_#{ dimension }".downcase).call
       elsif domain && questionnaire == 'FRPE'

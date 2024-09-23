@@ -36,6 +36,10 @@ module Results
         end
       end
 
+      def risk_lrst_rc
+        :not_apply
+      end
+
       def risk_lrst_rd
         case total
         when 50.1..Float::INFINITY then :very_high
@@ -154,6 +158,14 @@ module Results
         when 25.1..37.5 then :low
         else :very_low
         end
+      end
+
+      def risk_dt_erc
+        :not_apply
+      end
+
+      def risk_dt_cr
+        :not_apply
       end
 
       def risk_rt_rdpotr
